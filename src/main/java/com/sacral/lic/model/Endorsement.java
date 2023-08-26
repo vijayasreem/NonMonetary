@@ -1,35 +1,42 @@
-//Generated Spring Boot Entity/Model class
 package com.sacral.lic.model;
 
-import org.springframework.http.ResponseEntity;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class Endorsement {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String status;
+    private String comments;
 
-    private int endorsementNumber;
-    private String makerDetails;
-    private String timestamp;
-
-    public int getEndorsementNumber() {
-        return endorsementNumber;
+    public Endorsement() {
     }
 
-    public void setEndorsementNumber(int endorsementNumber) {
-        this.endorsementNumber = endorsementNumber;
+    public Integer getId() {
+        return id;
     }
 
-    public String getMakerDetails() {
-        return makerDetails;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setMakerDetails(String makerDetails) {
-        this.makerDetails = makerDetails;
+    public String getStatus() {
+        return status;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }
