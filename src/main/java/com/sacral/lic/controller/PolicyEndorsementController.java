@@ -1,54 +1,69 @@
-.
-
 package com.sacral.lic.controller;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sacral.lic.entity.PolicyEntity;
-import com.sacral.lic.entity.EndorsementEntity;
+import com.sacral.lic.entity.PolicyEndorsement;
 import com.sacral.lic.service.PolicyEndorsementService;
 
-@RestController
+@Controller
+@RequestMapping("/policyEndorsement")
 public class PolicyEndorsementController {
 
     @Autowired
     private PolicyEndorsementService policyEndorsementService;
-
-    @GetMapping("/api/policies/search")
-    public List<PolicyEntity> searchForPolicyNumber(@RequestParam String criteria) {
-        return policyEndorsementService.searchForPolicyNumber(criteria);
+    
+    // Method to search the existing policies with policy no
+    @GetMapping("/findByPolicyNo")
+    @ResponseBody
+    public PolicyEndorsement findByPolicyNo(@RequestParam(value="policyNo") String policyNo) {
+        return policyEndorsementService.findByPolicyNo(policyNo);
     }
-
-    @GetMapping("/api/endorsements/checker/pending")
-    public List<EndorsementEntity> fetchPendingEndorsementRecordsForChecker() {
-        return policyEndorsementService.fetchPendingEndorsementRecordsForChecker();
+    
+    // Method to search the existing policies with other filter criteria
+    @GetMapping("/findByPolicyStatusAndProductNameAndProductVariantAndUnitOfficeAndPolicyStartDateAndPolicyEndDate")
+    @ResponseBody
+    public List<PolicyEndorsement> findByPolicyStatusAndProductNameAndProductVariantAndUnitOfficeAndPolicyStartDateAndPolicyEndDate(
+            @RequestParam(value="policyStatus") String policyStatus,
+            @RequestParam(value="productName") String productName,
+            @RequestParam(value="productVariant") String productVariant,
+            @RequestParam(value="unitOffice") String unitOffice,
+            @RequestParam(value="policyStartDate") String policyStartDate,
+            @RequestParam(value="policyEndDate") String policyEndDate) {
+        return policyEndorsementService.findByPolicyStatusAndProductNameAndProductVariantAndUnitOfficeAndPolicyStartDateAndPolicyEndDate(policyStatus, productName, productVariant, unitOffice, policyStartDate, policyEndDate);
     }
-
-    @PostMapping("/api/endorsements/maker")
-    public void initiateEndorsementByMaker(EndorsementEntity entity) {
-        policyEndorsementService.initiateEndorsementByMaker(entity);
+    
+    // Method to save the customer/trust/policy level details
+    @PostMapping("/savePolicyEndorsementDetails")
+    @ResponseBody
+    public void savePolicyEndorsementDetails(@RequestBody PolicyEndorsement policyEndorsement) {
+        policyEndorsementService.savePolicyEndorsementDetails(policyEndorsement);
     }
-
-    @PutMapping("/api/endorsements/checker/approve/{endorsementId}")
-    public void approveEndorsementByChecker(@RequestParam Long endorsementId) {
-        policyEndorsementService.approveEndorsementByChecker(endorsementId);
+    
+    // Method to initiate the policy endorsement
+    @PostMapping("/initiatePolicyEndorsement")
+    @ResponseBody
+    public void initiatePolicyEndorsement(
+            @RequestParam(value="policyNumber") String policyNumber,
+            @RequestParam(value="endorsementType") String endorsementType,
+            @RequestParam(value="serviceType") String serviceType,
+            @RequestParam(value="endorsementSubType") String endorsementSubType) {
+        policyEndorsementService.initiatePolicyEndorsement(policyNumber, endorsementType, serviceType, endorsementSubType);
     }
-
-    @PutMapping("/api/endorsements/checker/reject/{endorsementId}")
-    public void rejectEndorsementByChecker(@RequestParam Long endorsementId) {
-        policyEndorsementService.rejectEndorsementByChecker(endorsementId);
-    }
-
-    @PutMapping("/api/endorsements/checker/sendback/{endorsementId}")
-    public void sendBackEndorsementToMaker(@RequestParam Long endorsementId) {
-        policyEndorsementService.sendBackEndorsementToMaker(endorsementId);
+    
+    // Method to generate the endorsement summary letter
+    @GetMapping("/generateEndorsementSummaryLetter")
+    @ResponseBody
+    public void generateEndorsementSummaryLetter(@RequestParam(value="policyNumber") String policyNumber) {
+        policyEndorsementService.generateEndorsementSummaryLetter(policyNumber);
     }
 
 }
